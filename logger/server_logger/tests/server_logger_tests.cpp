@@ -1,5 +1,5 @@
 #include "server.h"
-#include <server_logger_builder.h>
+#include "../include/server_logger_builder.h"
 
 int main()
 {
@@ -16,4 +16,6 @@ int main()
 
     log->trace("IT is a very long strange message !!!!!!!!!!%%%%%%%%\tzdtjhdjh").
 		information("bfldknbpxjxjvpxvjbpzjbpsjbpsjkgbpsejegpsjpegesjpvbejpvjzepvgjs");
+
+
 }

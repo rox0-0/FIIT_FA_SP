@@ -8,11 +8,11 @@
 #include <crow.h>
 #include <unordered_map>
 #include <logger.h>
-//#include <mutex>
 #include <shared_mutex>
 
 class server
 {
+
     crow::SimpleApp app;
 
     std::unordered_map<int, std::unordered_map<logger::severity, std::pair<std::string, bool>>> _streams;

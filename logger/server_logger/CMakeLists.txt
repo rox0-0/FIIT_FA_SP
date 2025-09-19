@@ -12,11 +12,15 @@ target_link_libraries(
         mp_os_lggr_srvr_lggr
         PUBLIC
         mp_os_cmmn)
+
 target_link_libraries(
         mp_os_lggr_srvr_lggr
         PUBLIC
         mp_os_lggr_lggr)
+
 target_link_libraries(
         mp_os_lggr_srvr_lggr
         PUBLIC
         nlohmann_json::nlohmann_json)
+
+add_subdirectory(tests) # Добавлено здесь

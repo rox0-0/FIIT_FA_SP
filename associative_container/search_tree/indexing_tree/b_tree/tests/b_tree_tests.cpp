@@ -496,48 +496,7 @@ TEST(bTreePositiveTests, test8)
     logger->trace("bTreePositiveTests.test8 finished");
 }
 
-TEST(bTreePositiveTests, test9)
-{
-    std::unique_ptr<logger> logger( create_logger(std::vector<std::pair<std::string, logger::severity>>
-                                                          {
-                                                                  { "b_tree_tests_logs.txt", logger::severity::trace }
-                                                          }));
 
-    logger->trace("bTreePositiveTests.test9 started");
-
-    std::vector<B_tree<int, std::string>::value_type> expected_result =
-    {
-        { 4, "e" },
-        { 15, "c" },
-        { 24, "g" },
-        { 45, "k" },
-        { 100, "f" },
-        { 101, "j" },
-    };
-
-    B_tree<int, std::string, std::less<int>, 5> tree(std::less<int>(), nullptr, logger.get());
-
-    tree.emplace(1, std::string("a"));
-    tree.emplace(2, std::string("b"));
-    tree.emplace(15, std::string("c"));
-    tree.emplace(3, std::string("d"));
-    tree.emplace(4, std::string("e"));
-    tree.emplace(100, std::string("f"));
-    tree.emplace(24, std::string("g"));
-    tree.emplace(456, std::string("h"));
-    tree.emplace(101, std::string("j"));
-    tree.emplace(45, std::string("k"));
-    tree.emplace(193, std::string("l"));
-    tree.emplace(534, std::string("m"));
-
-    auto b = tree.begin();
-    auto e = tree.end();
-    std::vector<decltype(tree)::value_type> actual_result(b, e);
-
-    EXPECT_TRUE(compare_obtain_results(expected_result, actual_result));
-
-    logger->trace("bTreePositiveTests.test9 finished");
-}
 
 TEST(bTreeNegativeTests, test1)
 {

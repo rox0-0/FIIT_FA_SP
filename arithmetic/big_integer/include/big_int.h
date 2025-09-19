@@ -68,6 +68,10 @@ public:
         BurnikelZiegler
     };
 
+    static big_int gcd(const big_int& a, const big_int& b);
+
+    big_int abs(const big_int& num);
+
 private:
 
     /** Decides type of mult/div that depends on size of lhs and rhs
@@ -88,6 +92,7 @@ public:
 
     explicit big_int(const std::string& num, unsigned int radix = 10, pp_allocator<unsigned int> = pp_allocator<unsigned int>());
 
+    // Запрещает не целочисленные типы
     template<std::integral Num>
     big_int(Num d, pp_allocator<unsigned int> = pp_allocator<unsigned int>());
 
@@ -102,7 +107,13 @@ public:
     big_int operator--(int);
 
     big_int& operator+=(const big_int& other) &;
-
+    inline big_int operator-() const {
+        big_int result(*this); // Создаем копию текущего объекта
+        if (!(result._digits.size() == 1 && result._digits[0] == 0)) {
+            result._sign = !result._sign; // Инвертируем знак, если число не ноль
+        }
+        return result;
+    }
     /** Shift will be needed for multiplication implementation
      *  @example Shift = 0: 111 + 222 = 333
      *  @example Shift = 1: 111 + 222 = 2331
@@ -164,18 +175,49 @@ public:
     friend std::istream &operator>>(std::istream &stream, big_int &value);
 
     std::string to_string() const;
+
+    friend big_int multiply_karatsuba(const big_int &a, const big_int &b);
 };
 
 template<class alloc>
-big_int::big_int(const std::vector<unsigned int, alloc> &digits, bool sign, pp_allocator<unsigned int> allocator)
+big_int::big_int(const std::vector<unsigned int, alloc> &digits, bool sign, pp_allocator<unsigned int> allocator) : _sign(sign), _digits(digits.begin(), digits.end(), allocator)
 {
-    throw not_implemented("template<class alloc> big_int::big_int(const std::vector<unsigned int, alloc> &digits, bool sign, pp_allocator<unsigned int> allocator)", "your code should be here...");
+    if (_digits.empty()) {
+        _digits.push_back(0);
+    }
+
+    while (_digits.size() > 1 && _digits.back() == 0) {
+        _digits.pop_back();
+    }
 }
 
 template<std::integral Num>
-big_int::big_int(Num d, pp_allocator<unsigned int>)
+big_int::big_int(Num d, pp_allocator<unsigned int> allocator) : _sign(d >= 0), _digits(allocator)
 {
-    throw not_implemented("template<std::integral Num>big_int::big_int(Num, pp_allocator<unsigned int>)", "your code should be here...");
+    auto abs_d = static_cast<unsigned long long> (d);
+
+    if (d < 0) {
+        abs_d = static_cast<unsigned long long> (-d);
+    }
+
+    _digits.clear();
+
+    if (abs_d == 0) {
+        _digits.push_back(0);
+    } else {
+        // Разбиение числа на цифры
+        unsigned long long BASE = 1ULL << (8 * sizeof(unsigned int));
+
+        while (abs_d > 0) {
+            _digits.push_back(static_cast<unsigned int>(abs_d % BASE));
+            abs_d /= BASE;
+        }
+    }
+
+    while (_digits.size() > 1 && _digits.back() == 0) {
+        _digits.pop_back();
+    }
+
 }
 
 big_int operator""_bi(unsigned long long n);
